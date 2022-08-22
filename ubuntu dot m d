@@ -1,1 +1,94 @@
 ## Installation kubectl on Ubuntu 20.04
+
+### Install apt-transport-https package which enables working with http and https in Ubuntu’s repositories. Also, install curl
+$ sudo apt install apt-transport-https curl
+
+Add the Kubernetes signing key
+$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+
+Add the Kubernetes repository as a package source
+$ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> ~/kubernetes.list
+  sudo mv ~/kubernetes.list /etc/apt/sources.list.d
+  sudo apt update
+
+Install Kubernetes tools kubectl
+$ sudo apt install kubectl
+
+Install kubernetes-cni – enables networking within the containers 
+$ sudo apt-get install -y kubernetes-cni
+
+Disabling Swap Memory
+$ sudo swapoff -a
+
+To check kubectl version
+$ kubectl --version
+
+
+## Installation Docker on Ubuntu 20.04
+
+$ sudo apt-get install docker.io -y
+$ sudo systemctl status docker
+$ sudo usermod -aG docker $USER && newgrp docker
+
+##  Install Minikube on Ubuntu 20.04 
+
+$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+$ chmod +x minikube
+$ sudo mv minikube /usr/local/bin/
+$ minikube version
+
+Start the minikube Kubernetes cluster on Ubuntu
+$ sudo minikube start --vm-driver=none
+$ sudo apt-get install -y conntrack
+
+Insatall cri-dockerd
+
+$ git clone https://github.com/Mirantis/cri-dockerd.git
+$ mkdir bin
+VERSION=$((git describe --abbrev=0 --tags | sed -e 's/v//') || echo $(cat VERSION)-$(git log -1 --pretty='%h')) PRERELEASE=$(grep -q dev <<< "${VERSION}" && echo "pre" || echo "") REVISION=$(git log -1 --pretty='%h')
+go build -ldflags="-X github.com/Mirantis/cri-dockerd/version.Version='$VERSION}' -X github.com/Mirantis/cri-dockerd/version.PreRelease='$PRERELEASE' -X github.com/Mirantis/cri-dockerd/version.BuildTime='$BUILD_DATE' -X github.com/Mirantis/cri-dockerd/version.GitCommit='$REVISION'" -o cri-dockerd
+
+Install go
+$ wget https://storage.googleapis.com/golang/getgo/installer_linux
+$ chmod +x ./installer_linux
+$ ./installer_linux
+$ source ~/.bash_profile
+
+$ cd cri-dockerd
+$ mkdir bin
+$ go build -o bin/cri-dockerd
+$ mkdir -p /usr/local/bin
+$ install -o root -g root -m 0755 bin/cri-dockerd /usr/local/bin/cri-dockerd
+$ cp -a packaging/systemd/* /etc/systemd/system
+$ sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+$ systemctl daemon-reload
+$ systemctl enable cri-docker.service
+$ systemctl enable --now cri-docker.socket
+
+Install crictl
+$ VERSION="v1.24.2"
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-$VERSION-linux-amd64.tar.gz
+$ sudo minikube start --vm-driver=none
+$ minikube status
+
+To check Minikube cluster information
+$ kubectl cluster-info
+
+To view minikube cluster events
+$ kubectl get events
+
+To view the kubectl configuration
+$ kubectl config view
+
+
+
+
+
+
+
+
+
+
+
