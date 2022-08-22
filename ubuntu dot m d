@@ -82,9 +82,21 @@ $ kubectl get events
 To view the kubectl configuration
 $ kubectl config view
 
+## Deploy network flannel 
+$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
 
+## Create Nginx cluster and deployment
+$ kubectl create deployment my-nginx --image=nginx
 
+## Create a file called subnet.env at location /run/flannel/ and add below content
 
+FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true
+
+Save the file and create the pod again. It should saw the runnign status now
 
 
 
