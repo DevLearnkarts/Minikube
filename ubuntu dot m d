@@ -98,6 +98,29 @@ FLANNEL_IPMASQ=true
 
 Save the file and create the pod again. It should saw the runnign status now
 
+## To check deployment on minikube cluster
+$ kubectl get deployment
+
+To check pods on minikube using kubectl command
+$ kubectl get pods
+
+To check service on minikube cluster using kubectl
+$ kubectl get svc
+
+To check minikube internal IP
+$ minikube ip
+
+To delete service on minikube cluster using kubectl
+$ kubectl delete deployment < name >
+
+To delete deployment on minikube cluster using kubectl
+$ kubectl delete deployment < name >
+
+To stop minikube cluster
+$ minikube stop
+
+To delete minikube cluster
+$ minikube delete
 
 
 
